@@ -1,0 +1,82 @@
+﻿# Start with a version identifier, it'll signify which map parser to use in case extra stuff is added later on'
+1
+
+# Next add some map metadata
+size 17 17
+
+#camera definition is now
+cam 3 0
+
+#Let's now define some squares
+sq etc
+
+#we also need to store which team is up next
+ct 1
+
+#also need to store how much money teams have got left
+fi 1 5000
+
+
+
+
+Things needed
+# Version identifier
+# map size
+# square which consists of x y square_type (building_type capture_amount team) (unit_type team health)
+# Which team is currently running
+# Current amounts of money per team
+
+
+
+
+
+
+
+
+Thinking about how to do multiplayer
+
+type ServerAddress = ServerAddress of string
+
+type MultiplayerGameType =
+	| Local
+	| LocalNetwork of ServerAddress * enemyName:string
+	| OnlineService of ServerAddress * enemyName:string
+
+
+For local multiplayer we need to retrieve all of our inputs from the touch screen but with Network play we need to retrieve any updates from a network service
+
+Create a GameComponent which handles the Gesture interactions
+
+	- Any swipes get sent to the camera service as a movement
+	- Any taps get sent to the UI service
+
+Create a UI service which will handle all the overlays,
+	- Stack panels for buttons
+	- If the tap is within a stack panel then pass it down and handle it appropriately
+	- If it's not within any UI elements, then check for any elements which want to be notified that it's outside and delete them and then send the message to the game service
+
+
+type UIServiceMessage =
+	| AddNewUIItem of closeOnOutsideTap:bool * ReactorConfiguration<'a>
+	| ProcessScreenTap of Tap
+
+
+type GameComponent(CameraServiceAddress:string, UIServiceAddress:string) =
+	
+	let actorRef = !UIServiceAddress.Head
+
+	override this.Update(gameTime) =
+
+		while gestures are available
+			match gesture type with
+			drag -> send to camera service
+			tap -> send to UI service
+
+
+UIServiceMessageHandler
+	panel := state.Panels |> List.tryFind panel_with_bounds_which_contains_tap
+	panelsToClose := state.Panels |> List.filter screens_which_close_on_outside_tap
+	panel
+		None -> Send tap to game
+				panelsToClose |> Close
+		Some x -> Send tap to containing panel
