@@ -1,11 +1,14 @@
-﻿namespace ReactiveGameEngine
+﻿namespace CardboardTaskForceReactive
 
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
 open Microsoft.Xna.Framework.Input.Touch
 open ReactiveGameEngine.Reactive
-   
+open CardboardTaskForceReactive.CameraModule
+open CardboardTaskForceReactive.Model
+open CardboardTaskForceReactive.UIService
+
 type InteractionType =
     | Tap of Vector2
     | Swipe of Vector2
@@ -14,7 +17,7 @@ type AspectRatio =
     | Widescreen
     | Retro
 
-type UserInteractionComponent (game, interaction_mapper:InteractionType -> ()) =
+type UserInteractionComponent (game, interaction_mapper:InteractionType -> unit) =
     inherit GameComponent (game)
 
     do TouchPanel.EnabledGestures <- GestureType.Tap ||| GestureType.HorizontalDrag ||| GestureType.VerticalDrag
@@ -43,22 +46,22 @@ type ReactiveGameEngineGame (aspectRatio) as this =
                        | Widescreen -> (1920, 1080)
                        | Retro -> (1280, 960)
 
-    let scale_factor = (float32 x_res) / (float32 this.Window.ClientBounds.Width)
+    let scale_factor_x = (float32 x_res) / (float32 this.Window.ClientBounds.Width)
+    let scale_factor_y = (float32 y_res) / (float32 this.Window.ClientBounds.Height)
+
+    let scale_factor = Vector2(scale_factor_x, scale_factor_y)
 
     let graphics = new GraphicsDeviceManager(this)
 
     let mutable spriteBatch = None
 
-
-    let interaction_mapper interaction_type =
-        let uiState = (!!"ui").Head
-
-
-
-
-
     override this.LoadContent () =
         do spriteBatch <- Some(new SpriteBatch(this.GraphicsDevice))
+        spawn_camera (Vector(0,0)) (x_res, y_res)
+        //spawn_ui_service
+        //spawn_map
+        //spawn_dying
+        //new UserInteractionComponent(this, fun _ -> ())
         base.LoadContent ()
 
     override this.Update gameTime =

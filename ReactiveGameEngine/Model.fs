@@ -39,6 +39,13 @@ module Rectangle =
 
     type Rectangle<'a> =
         | Rectangle of Vector<'a> * Vector<'a>
+        member this.TopLeft with get () = match this with | Rectangle(tl,_) -> tl
+        member this.BottomRight with get () = match this with | Rectangle(_, br) -> br
+        member this.TopRight with get () = match this with Rectangle(Vector(tlx,tly), Vector(brx, bry)) -> Vector(brx, tly)
+        member this.BottomLeft with get () = match this with Rectangle(Vector(tlx, tly), Vector(brx, bry)) -> Vector(tlx, bry)
 
-    let contains_vector (Rectangle(Vector(tlx, tly), Vector(brx, bry))) (Vector(x,y)) =
+    let contains_vector (Vector(x,y)) (Rectangle(Vector(tlx, tly), Vector(brx, bry))) =
         x > tlx && x < brx && y > tly && y < bry
+
+    let to_xrectangle (Rectangle(Vector(tlx,tly), Vector(brx, bry))) =
+        Microsoft.Xna.Framework.Rectangle(tlx, tly, brx - tlx, bry - tly)

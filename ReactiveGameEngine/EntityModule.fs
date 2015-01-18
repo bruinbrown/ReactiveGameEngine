@@ -41,6 +41,7 @@ module EntityModule =
         | BuildUnit of Vector<int> * EntityType
         | MoveUnit of Vector<int> * Vector<int>
         | TrimDeadUnits
+        | EndTurn
 
     let [<Literal>] ALIVE_DRAW_DEPTH = 0.3f
     let [<Literal>] DEAD_DRAW_DEPTH = 0.4f
@@ -68,6 +69,15 @@ module EntityModule =
             "map" <! TrimDeadUnits
             "dying" <! AddDyingEntity(state.Position, context.Path)
         { state with Health = new_health }
+
+    let private attack_entity (state, context) vector =
+        state
+
+    let private move_to (state, context) vec =
+        state
+
+    let private select (state, context) =
+        state
 
     let private message_handler (state:EntityState,context) (message:EntityMessage) =
         match message with

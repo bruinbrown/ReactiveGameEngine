@@ -58,6 +58,7 @@
     <Compile Include="Trie.fs" />
     <Compile Include="Reactive.fs" />
     <Compile Include="Model.fs" />
+    <Compile Include="UIService.fs" />
     <Compile Include="CameraModule.fs" />
     <Compile Include="BuildingModule.fs" />
     <Compile Include="EntityModule.fs" />
